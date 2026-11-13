@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../screens/add_task_screen.dart';
+import '../models/task_model.dart';
 
 import '../screens/login_screen.dart';
 import '../screens/signup_screen.dart';
@@ -45,6 +47,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/signup',
         builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: '/task',
+        builder: (context, state) {
+          final task = state.extra as Task?;
+
+          return AddTaskScreen(task: task);
+        },
       ),
       GoRoute(
         path: '/forgot-password',
