@@ -1,23 +1,33 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-final appRouterProvider = Provider<GoRouter>((ref) {
-  final auth = FirebaseAuth.instance;
+import '../screens/login_screen.dart';
+import '../screens/signup_screen.dart';
+import '../screens/dashboard_screen.dart';
+import '../screens/forgot_password_screen.dart';
+import 'auth_provider.dart';
 
-  final refreshNotifier = _GoRouterRefreshStream(auth.authStateChanges());
+final appRouterProvider = Provider<GoRouter>((ref) {
+  final authService = ref.watch(authServiceProvider);
+
+  final refreshNotifier = _GoRouterRefreshStream(authService.authStateChanges);
 
   final router = GoRouter(
     initialLocation: '/login',
     refreshListenable: refreshNotifier,
 
     redirect: (context, state) {
-      final isLoggedIn = auth.currentUser != null;
+      final isLoggedIn = authService.currentUser != null;
+      final location = state.matchedLocation;
 
-      final isAuthRoute = ['/login', '/signup'].contains(state.matchedLocation);
+      final isAuthRoute = [
+        '/login',
+        '/signup',
+        '/forgot-password',
+      ].contains(location);
 
       if (!isLoggedIn && !isAuthRoute) {
         return '/login';
@@ -31,18 +41,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     },
 
     routes: [
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Login'),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/signup',
-        builder: (context, state) => const _PlaceholderScreen(title: 'Sign Up'),
+        builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (context, state) => const ForgotPasswordScreen(),
       ),
       GoRoute(
         path: '/home',
-        builder: (context, state) =>
-            const _PlaceholderScreen(title: 'Dashboard'),
+        builder: (context, state) => const DashboardScreen(),
       ),
     ],
   );
@@ -66,19 +76,5 @@ class _GoRouterRefreshStream extends ChangeNotifier {
   void dispose() {
     _subscription.cancel();
     super.dispose();
-  }
-}
-
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-
-  const _PlaceholderScreen({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Taskly')),
-      body: Center(child: Text(title)),
-    );
   }
 }

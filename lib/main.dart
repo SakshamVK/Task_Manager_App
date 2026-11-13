@@ -22,7 +22,7 @@ class TaskManager extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'Taskly',
+      title: 'Task Manager',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       routerConfig: router,
