@@ -19,12 +19,18 @@ Create, track and complete work, even with an unreliable internet connection.
 
 <div align="center">
 
-<img src="docs/screenshots/img1.jpeg" width="200" />
-<img src="docs/screenshots/img2.jpeg" width="200" />
-<img src="docs/screenshots/img3.jpeg" width="200" />
-<img src="docs/screenshots/img4.jpeg" width="200" />
-<img src="docs/screenshots/img5.jpeg" width="200" />
-<img src="docs/screenshots/img6.jpeg" width="200" />
+<table>
+  <tr>
+    <td><img src="docs/screenshots/img1.jpeg" width="230" /></td>
+    <td><img src="docs/screenshots/img2.jpeg" width="230" /></td>
+    <td><img src="docs/screenshots/img3.jpeg" width="230" /></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/img4.jpeg" width="230" /></td>
+    <td><img src="docs/screenshots/img5.jpeg" width="230" /></td>
+    <td><img src="docs/screenshots/img6.jpeg" width="230" /></td>
+  </tr>
+</table>
 
 </div>
 
