@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AuthTextField extends StatelessWidget {
-  final String label;
-  final String hint;
-  final TextEditingController controller;
-  final bool obscureText;
-  final TextInputType keyboardType;
-  final Widget? suffixIcon;
-  final String? Function(String?)? validator;
-
   const AuthTextField({
     super.key,
     required this.label,
@@ -18,7 +10,23 @@ class AuthTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.suffixIcon,
     this.validator,
+    this.prefixIcon,
+    this.textInputAction,
+    this.onFieldSubmitted,
+    this.autofillHints,
   });
+
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final bool obscureText;
+  final TextInputType keyboardType;
+  final Widget? suffixIcon;
+  final String? Function(String?)? validator;
+  final Widget? prefixIcon;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onFieldSubmitted;
+  final Iterable<String>? autofillHints;
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +39,15 @@ class AuthTextField extends StatelessWidget {
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          autofillHints: autofillHints,
           validator: validator,
-          decoration: InputDecoration(hintText: hint, suffixIcon: suffixIcon),
+          onFieldSubmitted: onFieldSubmitted,
+          decoration: InputDecoration(
+            hintText: hint,
+            prefixIcon: prefixIcon,
+            suffixIcon: suffixIcon,
+          ),
         ),
       ],
     );

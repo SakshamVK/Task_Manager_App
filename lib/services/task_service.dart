@@ -56,6 +56,11 @@ class TaskService {
     await _tasks.doc(taskId).delete();
   }
 
+  // Restore a deleted task using its original document ID.
+  Future<void> restoreTask(Task task) async {
+    await _tasks.doc(task.id).set(task.toMap());
+  }
+
   // Toggle task completion.
   Future<void> toggleTaskCompletion(Task task) async {
     await _tasks.doc(task.id).update({

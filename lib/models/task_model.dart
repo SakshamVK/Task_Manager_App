@@ -2,12 +2,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum TaskPriority { low, medium, high }
 
+enum TaskCategory { clientWork, delivery, personal, other }
+
+extension TaskCategoryExtension on TaskCategory {
+  String get label {
+    switch (this) {
+      case TaskCategory.clientWork:
+        return 'Client Work';
+      case TaskCategory.delivery:
+        return 'Delivery';
+      case TaskCategory.personal:
+        return 'Personal';
+      case TaskCategory.other:
+        return 'Other';
+    }
+  }
+}
+
 class Task {
   final String id;
   final String title;
   final String description;
   final DateTime dueDate;
   final TaskPriority priority;
+  final TaskCategory category;
   final bool isCompleted;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -18,6 +36,7 @@ class Task {
     required this.description,
     required this.dueDate,
     required this.priority,
+    this.category = TaskCategory.other,
     required this.isCompleted,
     required this.createdAt,
     required this.updatedAt,
@@ -35,9 +54,13 @@ class Task {
         (p) => p.name == data['priority'],
         orElse: () => TaskPriority.medium,
       ),
+      category: TaskCategory.values.firstWhere(
+        (c) => c.name == data['category'],
+        orElse: () => TaskCategory.other,
+      ),
       isCompleted: data['isCompleted'] as bool? ?? false,
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
 
@@ -47,6 +70,7 @@ class Task {
       'description': description,
       'dueDate': Timestamp.fromDate(dueDate),
       'priority': priority.name,
+      'category': category.name,
       'isCompleted': isCompleted,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
@@ -58,6 +82,7 @@ class Task {
     String? description,
     DateTime? dueDate,
     TaskPriority? priority,
+    TaskCategory? category,
     bool? isCompleted,
     DateTime? updatedAt,
   }) {
@@ -67,6 +92,7 @@ class Task {
       description: description ?? this.description,
       dueDate: dueDate ?? this.dueDate,
       priority: priority ?? this.priority,
+      category: category ?? this.category,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

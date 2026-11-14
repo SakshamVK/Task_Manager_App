@@ -3,58 +3,57 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../screens/add_task_screen.dart';
-import '../models/task_model.dart';
 
-import '../screens/login_screen.dart';
-import '../screens/signup_screen.dart';
+import '../models/task_model.dart';
+import '../screens/add_task_screen.dart';
 import '../screens/dashboard_screen.dart';
 import '../screens/forgot_password_screen.dart';
+import '../screens/login_screen.dart';
+import '../screens/onboarding_screen.dart';
+import '../screens/signup_screen.dart';
 import 'auth_provider.dart';
+import 'onboarding_service.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authService = ref.watch(authServiceProvider);
-
+  final onboardingService = ref.watch(onboardingServiceProvider);
   final refreshNotifier = _GoRouterRefreshStream(authService.authStateChanges);
 
   final router = GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/onboarding',
     refreshListenable: refreshNotifier,
-
     redirect: (context, state) {
       final isLoggedIn = authService.currentUser != null;
       final location = state.matchedLocation;
-
+      final isOnboarding = location == '/onboarding';
       final isAuthRoute = [
         '/login',
         '/signup',
         '/forgot-password',
       ].contains(location);
 
-      if (!isLoggedIn && !isAuthRoute) {
-        return '/login';
+      if (!onboardingService.isCompleted) {
+        return isOnboarding ? null : '/onboarding';
       }
 
-      if (isLoggedIn && isAuthRoute) {
-        return '/home';
+      if (isOnboarding) {
+        return isLoggedIn ? '/home' : '/login';
       }
 
+      if (!isLoggedIn && !isAuthRoute) return '/login';
+      if (isLoggedIn && isAuthRoute) return '/home';
       return null;
     },
-
     routes: [
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
-        path: '/signup',
-        builder: (context, state) => const SignupScreen(),
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
       ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
       GoRoute(
         path: '/task',
-        builder: (context, state) {
-          final task = state.extra as Task?;
-
-          return AddTaskScreen(task: task);
-        },
+        builder: (context, state) => AddTaskScreen(task: state.extra as Task?),
       ),
       GoRoute(
         path: '/forgot-password',

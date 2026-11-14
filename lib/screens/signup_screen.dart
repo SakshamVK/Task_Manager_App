@@ -16,15 +16,18 @@ class SignupScreen extends ConsumerStatefulWidget {
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -44,19 +47,19 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       case 'network-request-failed':
         return 'Network error. Check your connection.';
       default:
-        return e.message ?? 'Registration failed. Please try again.';
+        return 'Registration failed. Please try again.';
     }
   }
 
   Future<void> _signup() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isLoading = true);
 
     try {
       await ref
           .read(authServiceProvider)
           .signUp(
+            name: _nameController.text,
             email: _emailController.text,
             password: _passwordController.text,
           );
@@ -79,6 +82,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -91,33 +96,51 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.task_alt_rounded,
-                      size: 64,
-                      color: Color(0xFF625BEE),
+                      size: 60,
+                      color: theme.colorScheme.primary,
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 24),
                     Text(
                       'Create an account',
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Start organizing your work and tasks.',
+                      'Set up your workspace and keep your work organised.',
                       textAlign: TextAlign.center,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                    const SizedBox(height: 36),
-
+                    const SizedBox(height: 32),
+                    AuthTextField(
+                      label: 'Your name',
+                      hint: 'Enter your name',
+                      controller: _nameController,
+                      prefixIcon: const Icon(Icons.person_outline),
+                      textInputAction: TextInputAction.next,
+                      autofillHints: const [AutofillHints.name],
+                      validator: (value) =>
+                          value == null || value.trim().isEmpty
+                          ? 'Name is required.'
+                          : value.trim().length < 2
+                          ? 'Enter at least 2 characters.'
+                          : null,
+                    ),
+                    const SizedBox(height: 18),
                     AuthTextField(
                       label: 'Email address',
-                      hint: 'Enter your email',
+                      hint: 'you@example.com',
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
+                      prefixIcon: const Icon(Icons.mail_outline),
+                      textInputAction: TextInputAction.next,
+                      autofillHints: const [AutofillHints.email],
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Email is required.';
@@ -130,72 +153,75 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
-
+                    const SizedBox(height: 18),
                     AuthTextField(
                       label: 'Password',
                       hint: 'At least 6 characters',
                       controller: _passwordController,
                       obscureText: _obscurePassword,
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      textInputAction: TextInputAction.next,
                       suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
+                        onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
                         icon: Icon(
                           _obscurePassword
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined,
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.length < 6) {
-                          return 'Password must be at least 6 characters.';
-                        }
-                        return null;
-                      },
+                      validator: (value) => value == null || value.length < 6
+                          ? 'Password must be at least 6 characters.'
+                          : null,
                     ),
-                    const SizedBox(height: 20),
-
+                    const SizedBox(height: 18),
                     AuthTextField(
                       label: 'Confirm password',
                       hint: 'Re-enter your password',
                       controller: _confirmPasswordController,
-                      obscureText: true,
-                      validator: (value) {
-                        if (value != _passwordController.text) {
-                          return 'Passwords do not match.';
-                        }
-                        return null;
-                      },
+                      obscureText: _obscureConfirmPassword,
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      textInputAction: TextInputAction.done,
+                      suffixIcon: IconButton(
+                        onPressed: () => setState(
+                          () => _obscureConfirmPassword =
+                              !_obscureConfirmPassword,
+                        ),
+                        icon: Icon(
+                          _obscureConfirmPassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                      ),
+                      validator: (value) => value != _passwordController.text
+                          ? 'Passwords do not match.'
+                          : null,
                     ),
-
                     const SizedBox(height: 28),
-
-                    ElevatedButton(
-                      onPressed: _isLoading ? null : _signup,
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 22,
-                              width: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Text('Create Account'),
+                    SizedBox(
+                      height: 54,
+                      child: FilledButton(
+                        onPressed: _isLoading ? null : _signup,
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 22,
+                                width: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('Create Account'),
+                      ),
                     ),
-
-                    const SizedBox(height: 20),
-
+                    const SizedBox(height: 18),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text('Already have an account?'),
                         TextButton(
                           onPressed: () => context.go('/login'),
-                          child: const Text('Log In'),
+                          child: const Text('Log in'),
                         ),
                       ],
                     ),

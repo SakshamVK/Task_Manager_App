@@ -99,14 +99,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     const SizedBox(height: 28),
                     Text(
-                      'Welcome back!',
+                      'Welcome back',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Log in to manage your tasks and stay productive.',
+                      'Sign in to pick up where you left off.',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
@@ -119,6 +119,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       hint: 'Enter your email',
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
+                      prefixIcon: const Icon(Icons.mail_outline),
+                      textInputAction: TextInputAction.next,
+                      autofillHints: const [AutofillHints.email],
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Email is required.';
@@ -138,6 +141,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       hint: 'Enter your password',
                       controller: _passwordController,
                       obscureText: _obscurePassword,
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      textInputAction: TextInputAction.done,
+                      autofillHints: const [AutofillHints.password],
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {

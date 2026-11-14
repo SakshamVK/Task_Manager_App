@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'app_colors.dart';
 import 'app_dimensions.dart';
 
@@ -9,7 +10,7 @@ class AppTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: AppColors.primary,
       brightness: Brightness.light,
-      surface: AppColors.surface,
+      surface: AppColors.background,
     );
 
     return ThemeData(
@@ -22,13 +23,16 @@ class AppTheme {
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
         centerTitle: false,
+        scrolledUnderElevation: 0,
       ),
 
       cardTheme: CardThemeData(
         color: AppColors.surface,
         elevation: 0,
+        margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+          borderRadius: BorderRadius.circular(18),
+          side: BorderSide(color: AppColors.divider),
         ),
       ),
 
@@ -40,16 +44,16 @@ class AppTheme {
           vertical: AppDimensions.paddingM,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-          borderSide: const BorderSide(color: AppColors.divider),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: AppColors.divider),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
         ),
       ),
 
@@ -60,9 +64,22 @@ class AppTheme {
           minimumSize: const Size(double.infinity, AppDimensions.buttonHeight),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
+      ),
+
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      ),
+
+      chipTheme: ChipThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        side: BorderSide(color: AppColors.divider),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
       ),
 
       dividerColor: AppColors.divider,
