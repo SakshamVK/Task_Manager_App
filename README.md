@@ -23,6 +23,8 @@ Create, track and complete work, even with an unreliable internet connection.
 <img src="docs/screenshots/img2.jpeg" width="200" />
 <img src="docs/screenshots/img3.jpeg" width="200" />
 <img src="docs/screenshots/img4.jpeg" width="200" />
+<img src="docs/screenshots/img5.jpeg" width="200" />
+<img src="docs/screenshots/img6.jpeg" width="200" />
 
 </div>
 
