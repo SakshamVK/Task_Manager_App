@@ -4,7 +4,9 @@ import '../models/task_model.dart';
 import '../services/task_service.dart';
 
 final taskServiceProvider = Provider<TaskService>((ref) {
-  return TaskService();
+  final service = TaskService();
+  ref.onDispose(service.dispose);
+  return service;
 });
 
 final tasksProvider = StreamProvider<List<Task>>((ref) {

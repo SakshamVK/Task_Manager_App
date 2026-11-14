@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../constants/app_colors.dart';
 import '../models/task_model.dart';
 import '../providers/auth_provider.dart';
 import '../providers/task_provider.dart';
 import '../widgets/task_card.dart';
+import '../widgets/offline_banner.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -372,6 +374,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget build(BuildContext context) {
     final tasksAsync = ref.watch(tasksProvider);
     final theme = Theme.of(context);
+    final displayName = FirebaseAuth.instance.currentUser?.displayName?.trim();
+
+    final firstName = (displayName == null || displayName.isEmpty)
+        ? null
+        : displayName.split(RegExp(r'\s+')).first;
 
     return Scaffold(
       appBar: AppBar(
@@ -452,13 +459,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
               children: [
                 Text(
-                  '${_greeting()}!',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                Text(
-                  '${authServiceProvider.name}!',
+                  '${_greeting()}${firstName != null ? ', $firstName' : ''}!',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                   ),
@@ -471,6 +472,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                const OfflineBanner(),
 
                 _buildProgressSummary(completedCount, tasks.length),
 

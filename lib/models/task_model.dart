@@ -64,6 +64,26 @@ class Task {
     );
   }
 
+  factory Task.fromLocalMap(Map<String, Object?> data) {
+    return Task(
+      id: data['id'] as String,
+      title: data['title'] as String,
+      description: data['description'] as String? ?? '',
+      dueDate: DateTime.parse(data['dueDate'] as String),
+      priority: TaskPriority.values.firstWhere(
+        (p) => p.name == data['priority'],
+        orElse: () => TaskPriority.medium,
+      ),
+      category: TaskCategory.values.firstWhere(
+        (c) => c.name == data['category'],
+        orElse: () => TaskCategory.other,
+      ),
+      isCompleted: (data['isCompleted'] as int? ?? 0) == 1,
+      createdAt: DateTime.parse(data['createdAt'] as String),
+      updatedAt: DateTime.parse(data['updatedAt'] as String),
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'title': title,
@@ -77,7 +97,27 @@ class Task {
     };
   }
 
+  Map<String, Object?> toLocalMap({
+    required String userId,
+    int syncStatus = 1,
+  }) {
+    return {
+      'id': id,
+      'userId': userId,
+      'title': title,
+      'description': description,
+      'dueDate': dueDate.toIso8601String(),
+      'priority': priority.name,
+      'category': category.name,
+      'isCompleted': isCompleted ? 1 : 0,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'syncStatus': syncStatus,
+    };
+  }
+
   Task copyWith({
+    String? id,
     String? title,
     String? description,
     DateTime? dueDate,
@@ -87,7 +127,7 @@ class Task {
     DateTime? updatedAt,
   }) {
     return Task(
-      id: id,
+      id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
       dueDate: dueDate ?? this.dueDate,
