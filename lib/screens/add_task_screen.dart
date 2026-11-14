@@ -121,11 +121,11 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
       );
 
       Navigator.pop(context);
-    } catch (e) {
+    } catch (_) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$e Unable to save task. Please try again.')),
+        const SnackBar(content: Text('Unable to save task. Please try again.')),
       );
     } finally {
       if (mounted) {
