@@ -123,7 +123,7 @@ The UI only reads from the local database, so it responds immediately. `TaskServ
 
 ```bash
 # 1. Clone
-git clone <your-repository-url>
+git clone https://github.com/SakshamVK/Task_Manager_App.git
 cd Task_Manager_App
 
 # 2. Install dependencies
@@ -186,8 +186,8 @@ flutter test
 
 ## Author
 
-**YOUR NAME**
-GitHub: [@your-username](https://github.com/your-username)
+**Saksham Khare**
+GitHub: [@SakshamVK](https://github.com/SakshamVK)
 
 ---
 
